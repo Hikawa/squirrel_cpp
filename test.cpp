@@ -9,5 +9,4 @@ int main() {
   sq::VM vm(&console);
   console.vm = &vm;
   console.repl();
-  vm.getField(3);
 }

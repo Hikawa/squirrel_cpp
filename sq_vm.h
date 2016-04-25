@@ -13,7 +13,7 @@
 #define SQVM_TOPG TopGuard g(this, true, __FILE__, __LINE__, __FUNCTION__)
 #define SQVM_LTOPG TopGuard g(this, false, __FILE__, __LINE__, __FUNCTION__)
 #define SQVM_CTOPG CTopGuard g(this, __FILE__, __LINE__, __FUNCTION__)
-#define SQVM_ASS(expr) if (!SQ_SUCCEEDED(expr)) throw sq::VM::Error(this, 0, (boost::format("%1 failed in %2: %3: %4") % #expr % __FILE__ % __LINE__ % __FUNCTION__).str())
+#define SQVM_ASS(expr) if (!SQ_SUCCEEDED(expr)) throw sq::VM::Error(this, 0, (boost::format("%1% failed in %2%: %3%: %4%") % #expr % __FILE__ % __LINE__ % __FUNCTION__).str())
 
 namespace sq {
 
@@ -278,8 +278,8 @@ public:
     checked = true;
     if ((delta != -1) && (vm->getTop() - oldTop != delta))
       throw Error(vm, vm->getTop(), (boost::format(
-              "SQ VM stack integrity failed: Expexted delta = %1 but got %2 "
-              " in %3: %4 on line %5") % delta % (vm->getTop() - oldTop)
+              "SQ VM stack integrity failed: Expexted delta = %1% but got %2% "
+              " in %3%: %4% on line %5%") % delta % (vm->getTop() - oldTop)
               % file % function % line).str());
   }
 
@@ -622,7 +622,7 @@ inline bool VM::instanceOf() {
 inline void VM::newSlot(SQInteger idx, bool isStatic) {
   SQVM_TOPG;
   if ((valueType(idx) != OT_CLASS) && (valueType(idx) != OT_TABLE))
-    throw Error(this, idx, (boost::format("Can't create slot in value of type %1")
+    throw Error(this, idx, (boost::format("Can't create slot in value of type %1%")
                 % valueTypeName(idx)).str());
   SQVM_ASS(sq_newslot(vm, idx, isStatic? SQTrue: SQFalse));
   g.check(-2);
@@ -665,7 +665,7 @@ inline void VM::pushField(Key field, int idx) {
   if (idx < 0) idx -= 1;
   (*this) << field;
   if (!SQ_SUCCEEDED(sq_get(vm, idx)))
-    throw Error(this, idx, (boost::format("Can't get field: %1")
+    throw Error(this, idx, (boost::format("Can't get field: %1%")
                 % field).str());
   g.check(1);
 }
@@ -706,7 +706,7 @@ inline void VM::doFile(const std::string& fileName) {
 inline SQInteger VM::getInt(SQInteger idx) const {
   SQInteger v;
   if (!SQ_SUCCEEDED(sq_getinteger(vm, idx, &v)))
-    throw Error(this, idx, (boost::format("Expected integer but got value of type %1")
+    throw Error(this, idx, (boost::format("Expected integer but got value of type %1%")
                 % valueTypeName(idx)).str());
   return v;
 }
@@ -741,7 +741,7 @@ inline SQInteger VM::Any::getInt() const {
 inline SQFloat VM::getFloat(SQInteger idx) const {
   SQFloat v;
   if (!SQ_SUCCEEDED(sq_getfloat(vm, idx, &v)))
-    throw Error(this, idx, (boost::format("Expected float but got value of type %1")
+    throw Error(this, idx, (boost::format("Expected float but got value of type %1%")
                 % valueTypeName(idx)).str());
   return v;
 }
@@ -776,7 +776,7 @@ inline SQFloat VM::Any::getFloat() const {
 inline std::string VM::getString(SQInteger idx) const {
   const SQChar* str;
   if (!SQ_SUCCEEDED(sq_getstring(vm, idx, &str)))
-    throw Error(this, idx, (boost::format("Expected string but got value of type %1")
+    throw Error(this, idx, (boost::format("Expected string but got value of type %1%")
                 % valueTypeName(idx)).str());
   return std::string(str);
 }
@@ -784,7 +784,7 @@ inline std::string VM::getString(SQInteger idx) const {
 inline std::string VM::getAsString(SQInteger idx) const {
   SQVM_CTOPG;
   if (!SQ_SUCCEEDED(sq_tostring(vm, idx)))
-    throw Error(this, idx, (boost::format("Can't convert value of type %1 to string")
+    throw Error(this, idx, (boost::format("Can't convert value of type %1% to string")
                 % valueTypeName(idx)).str());
   std::string result;
   const_cast<VM&>(*this) >> result;
@@ -821,7 +821,7 @@ inline std::string VM::Any::getString() const {
 inline bool VM::getBool(SQInteger idx) const {
   SQBool v;
   if (!SQ_SUCCEEDED(sq_getbool(vm, idx, &v)))
-    throw Error(this, idx, (boost::format("Expected bool but got value of type %1")
+    throw Error(this, idx, (boost::format("Expected bool but got value of type %1%")
                 % valueTypeName(idx)).str());
   return v;
 }

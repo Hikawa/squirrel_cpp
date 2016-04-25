@@ -12,7 +12,7 @@
 #define SQVM_TOPG TopGuard g(this, true, __FILE__, __LINE__, __FUNCTION__)
 #define SQVM_LTOPG TopGuard g(this, false, __FILE__, __LINE__, __FUNCTION__)
 #define SQVM_CTOPG CTopGuard g(this, __FILE__, __LINE__, __FUNCTION__)
-#define SQVM_ASS(expr) if (!SQ_SUCCEEDED(expr)) throw sq::VM::Error(this, 0, (boost::format("%1 failed in %2: %3: %4") % #expr % __FILE__ % __LINE__ % __FUNCTION__).str())
+#define SQVM_ASS(expr) if (!SQ_SUCCEEDED(expr)) throw sq::VM::Error(this, 0, (boost::format("%1% failed in %2%: %3%: %4%") % #expr % __FILE__ % __LINE__ % __FUNCTION__).str())
 
 namespace sq {
 
