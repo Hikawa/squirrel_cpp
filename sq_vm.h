@@ -53,7 +53,7 @@ public:
                    SQInteger line,
                    SQInteger column) = 0;
   };
-  
+
   VM(const VM&) = delete;
   VM(PrintHandler* handler = nullptr, SQInteger initialStackSize = 1024);
   virtual ~VM() { sq_close(vm); }
@@ -238,7 +238,9 @@ public:
   
   void setParameterCheck(SQInteger paramCount, const std::string& params);
 
-  void pushRawClosure(SQFUNCTION func, SQInteger freeVars);
+  void pushRawClosure(SQFUNCTION func, SQInteger freeVars = 0);
+  template <typename F, F func>
+  void pushClosure(SQInteger freeVars = 0);
   
   static VM* inst(HSQUIRRELVM vm) {
     return reinterpret_cast<VM*>(sq_getforeignptr(vm));
@@ -676,6 +678,21 @@ inline void VM::pushRootTable() {
 
 inline void VM::pushRawClosure(SQFUNCTION func, SQInteger freeVars) {
   SQVM_TOPG; sq_newclosure(vm, func, freeVars); g.check(1 - freeVars);
+}
+
+template <typename F, F func>
+inline void VM::pushClosure(SQInteger freeVars) {
+  struct Impl {
+    SQInteger call(HSQUIRRELVM v) {
+      VM* vm = VM::inst(v);
+      try {
+        return func(vm);
+      } catch (Error& e) {
+        return vm->throwError(e.what());
+      }
+    }
+  };
+  pushRawClosure(&Impl::call, freeVars);
 }
 
 inline void VM::compile(const std::string& code, const std::string& fileName) {
